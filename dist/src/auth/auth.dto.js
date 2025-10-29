@@ -11,10 +11,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VerificationDto = exports.LoginDto = exports.RegisterDto = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
+class AddressDto {
+    district;
+    sub_district;
+    thana;
+}
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AddressDto.prototype, "district", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AddressDto.prototype, "sub_district", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AddressDto.prototype, "thana", void 0);
 class RegisterDto {
     email;
     password;
     name;
+    address;
 }
 exports.RegisterDto = RegisterDto;
 __decorate([
@@ -31,6 +50,12 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => AddressDto),
+    __metadata("design:type", AddressDto)
+], RegisterDto.prototype, "address", void 0);
 class LoginDto {
     email;
     password;

@@ -1,7 +1,13 @@
+declare class AddressDto {
+    district: string;
+    sub_district: string;
+    thana: string;
+}
 export declare class RegisterDto {
     email: string;
     password: string;
     name: string;
+    address?: AddressDto;
 }
 export declare class LoginDto {
     email: string;
@@ -10,3 +16,4 @@ export declare class LoginDto {
 export declare class VerificationDto {
     token: string;
 }
+export {};

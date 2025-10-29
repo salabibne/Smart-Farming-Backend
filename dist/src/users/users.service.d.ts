@@ -4,6 +4,14 @@ export declare class UserService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     create(registerDto: RegisterDto): Promise<{
+        profile: {
+            address: import("@prisma/client/runtime/library").JsonValue | null;
+            id: string;
+            bio: string | null;
+            role: import(".prisma/client").$Enums.Role;
+            userId: string;
+        } | null;
+    } & {
         email: string;
         password: string;
         name: string;

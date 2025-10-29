@@ -1,3 +1,5 @@
+// this user service handles user related operations such as creating a user, finding by email or id, verifying email, and managing refresh tokens.
+
 import {
   Injectable,
   ConflictException,
@@ -7,8 +9,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from '../auth/auth.dto';
 import * as crypto from 'crypto';
-
-
+import { Role } from '@prisma/client';
+import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -16,10 +18,10 @@ export class UserService {
 
   // Create a new user
   async create(registerDto: RegisterDto) {
-    const { email, password, name } = registerDto;
+    const { email, password, name , address} = registerDto;
 
     // Check if user already exists
-    const existingUser = await this.prisma.users.findUnique({
+    const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });
     if (existingUser) {
@@ -33,15 +35,27 @@ export class UserService {
     const verificationToken = this.generateVerificationToken();
     const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    // Create user
-    const user = await this.prisma.users.create({
+    // Create user in database 
+    // here user first created , then profile created 
+
+    const user = await this.prisma.user.create({
       data: {
         email,
         password: hashedPassword,
         name,
         verificationToken,
         verificationTokenExpires,
+        profile: {
+          create: {
+            bio: 'This is my bio',
+            role: Role.USER,
+            //store address as a json
+            address: address ? instanceToPlain(address) : {},
+          },
+        },
       },
+      // include profile in the returned user
+      include: { profile: true },
     });
 
     return user;
@@ -49,17 +63,17 @@ export class UserService {
 
   // Find by email
   async findByEmail(email: string) {
-    return await this.prisma.users.findUnique({ where: { email } });
+    return await this.prisma.user.findUnique({ where: { email } });
   }
 
   // Find by ID
   async findById(id: string) {
-    return await this.prisma.users.findUnique({ where: { id } });
+    return await this.prisma.user.findUnique({ where: { id } });
   }
 
   // Verify email
   async verifyEmail(token: string) {
-    const user = await this.prisma.users.findFirst({
+    const user = await this.prisma.user.findFirst({
       where: {
         verificationToken: token,
         verificationTokenExpires: {
@@ -72,7 +86,7 @@ export class UserService {
       throw new NotFoundException('Invalid or expired verification token');
     }
 
-    return await this.prisma.users.update({
+    return await this.prisma.user.update({
       where: { id: user.id },
       data: {
         isVerified: true,
@@ -88,7 +102,7 @@ export class UserService {
     refreshToken: string,
   ): Promise<void> {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 12);
-    await this.prisma.users.update({
+    await this.prisma.user.update({
       where: { id: userId },
       data: { refreshToken: hashedRefreshToken },
     });
@@ -96,7 +110,7 @@ export class UserService {
 
   // Remove refresh token
   async removeRefreshToken(userId: string): Promise<void> {
-    await this.prisma.users.update({
+    await this.prisma.user.update({
       where: { id: userId },
       data: { refreshToken: null },
     });

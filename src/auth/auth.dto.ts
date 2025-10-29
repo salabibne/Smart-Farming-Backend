@@ -1,5 +1,14 @@
-import { IsEmail,IsString,MinLength,IsNotEmpty } from "class-validator";
+import { IsEmail,IsString,MinLength,IsNotEmpty,ValidateNested } from "class-validator";
+import { Type } from 'class-transformer';
 
+class AddressDto {
+  @IsString()
+  district: string;
+  @IsString()
+  sub_district: string;
+  @IsString()
+  thana: string;
+}
 export class RegisterDto {
   @IsEmail()
   email: string;
@@ -8,9 +17,14 @@ export class RegisterDto {
   @MinLength(6)
   password: string;
 
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => AddressDto)
+  address?: AddressDto;
 }
 
 export class LoginDto {

@@ -14,14 +14,16 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const client_1 = require("@prisma/client");
+const class_transformer_1 = require("class-transformer");
 let UserService = class UserService {
     prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
     async create(registerDto) {
-        const { email, password, name } = registerDto;
-        const existingUser = await this.prisma.users.findUnique({
+        const { email, password, name, address } = registerDto;
+        const existingUser = await this.prisma.user.findUnique({
             where: { email },
         });
         if (existingUser) {
@@ -30,25 +32,33 @@ let UserService = class UserService {
         const hashedPassword = await bcrypt.hash(password, 12);
         const verificationToken = this.generateVerificationToken();
         const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        const user = await this.prisma.users.create({
+        const user = await this.prisma.user.create({
             data: {
                 email,
                 password: hashedPassword,
                 name,
                 verificationToken,
                 verificationTokenExpires,
+                profile: {
+                    create: {
+                        bio: 'This is my bio',
+                        role: client_1.Role.USER,
+                        address: address ? (0, class_transformer_1.instanceToPlain)(address) : {},
+                    },
+                },
             },
+            include: { profile: true },
         });
         return user;
     }
     async findByEmail(email) {
-        return await this.prisma.users.findUnique({ where: { email } });
+        return await this.prisma.user.findUnique({ where: { email } });
     }
     async findById(id) {
-        return await this.prisma.users.findUnique({ where: { id } });
+        return await this.prisma.user.findUnique({ where: { id } });
     }
     async verifyEmail(token) {
-        const user = await this.prisma.users.findFirst({
+        const user = await this.prisma.user.findFirst({
             where: {
                 verificationToken: token,
                 verificationTokenExpires: {
@@ -59,7 +69,7 @@ let UserService = class UserService {
         if (!user) {
             throw new common_1.NotFoundException('Invalid or expired verification token');
         }
-        return await this.prisma.users.update({
+        return await this.prisma.user.update({
             where: { id: user.id },
             data: {
                 isVerified: true,
@@ -70,13 +80,13 @@ let UserService = class UserService {
     }
     async updateRefreshToken(userId, refreshToken) {
         const hashedRefreshToken = await bcrypt.hash(refreshToken, 12);
-        await this.prisma.users.update({
+        await this.prisma.user.update({
             where: { id: userId },
             data: { refreshToken: hashedRefreshToken },
         });
     }
     async removeRefreshToken(userId) {
-        await this.prisma.users.update({
+        await this.prisma.user.update({
             where: { id: userId },
             data: { refreshToken: null },
         });
