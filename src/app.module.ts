@@ -4,6 +4,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { WeatherModule } from './weather/weather.module';
+import { InventoryCategoryModule } from './inventory_category/inventory_category.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { WeatherModule } from './weather/weather.module';
     PrismaModule,
     AuthModule,
     WeatherModule,
+    InventoryCategoryModule,
   ],
 })
 export class AppModule {}

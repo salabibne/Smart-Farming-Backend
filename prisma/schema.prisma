@@ -38,5 +38,20 @@ enum Role {
  
 }
 
+// Inventory 
 
+enum StatusInventory {
+  ACTIVE
+  INACTIVE
+}
 
+model InventoryCategory {
+  id          String          @id @default(uuid())
+  name        String          @db.VarChar
+  description String?         @db.VarChar
+  status      StatusInventory @default(ACTIVE)
+  createdAt   DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime        @updatedAt @db.Timestamp(6)
+
+  
+}

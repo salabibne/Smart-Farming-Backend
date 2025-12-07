@@ -13,6 +13,7 @@ const throttler_1 = require("@nestjs/throttler");
 const auth_module_1 = require("./auth/auth.module");
 const prisma_module_1 = require("./prisma/prisma.module");
 const weather_module_1 = require("./weather/weather.module");
+const inventory_category_module_1 = require("./inventory_category/inventory_category.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,6 +32,7 @@ exports.AppModule = AppModule = __decorate([
             prisma_module_1.PrismaModule,
             auth_module_1.AuthModule,
             weather_module_1.WeatherModule,
+            inventory_category_module_1.InventoryCategoryModule,
         ],
     })
 ], AppModule);
