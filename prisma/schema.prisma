@@ -40,6 +40,7 @@ enum Role {
 
 // Inventory 
 
+// Inventory Category 
 enum StatusInventory {
   ACTIVE
   INACTIVE
@@ -55,3 +56,4 @@ model InventoryCategory {
 
   
 }
+

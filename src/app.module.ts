@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { WeatherModule } from './weather/weather.module';
 import { InventoryCategoryModule } from './inventory_category/inventory_category.module';
+import { InventoryManagementModule } from './inventory-management/inventory-management.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { InventoryCategoryModule } from './inventory_category/inventory_category
     AuthModule,
     WeatherModule,
     InventoryCategoryModule,
+    InventoryManagementModule,
   ],
 })
 export class AppModule {}
