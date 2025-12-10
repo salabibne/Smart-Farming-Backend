@@ -7,12 +7,12 @@ export declare class InventoryCategoryController {
     create(createInventoryCategoryDto: CreateInventoryCategoryDto): Promise<{
         message: string;
         data: {
-            id: string;
             name: string;
-            description: string | null;
-            status: import(".prisma/client").$Enums.StatusInventory;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            status: import(".prisma/client").$Enums.StatusInventory;
+            description: string | null;
         };
         status: number;
     }>;
@@ -20,12 +20,12 @@ export declare class InventoryCategoryController {
         message: string;
         status: number;
         data: {
-            id: string;
             name: string;
-            description: string | null;
-            status: import(".prisma/client").$Enums.StatusInventory;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            status: import(".prisma/client").$Enums.StatusInventory;
+            description: string | null;
         }[];
     }>;
     findOne(id: string): Promise<{
@@ -36,12 +36,12 @@ export declare class InventoryCategoryController {
         message: string;
         status: number;
         data: {
-            id: string;
             name: string;
-            description: string | null;
-            status: import(".prisma/client").$Enums.StatusInventory;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            status: import(".prisma/client").$Enums.StatusInventory;
+            description: string | null;
         };
     }>;
     update(id: string, updateInventoryCategoryDto: UpdateInventoryCategoryDto): string;

@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { WeatherModule } from './weather/weather.module';
 import { InventoryCategoryModule } from './inventory_category/inventory_category.module';
 import { InventoryManagementModule } from './inventory-management/inventory-management.module';
+import { InventoryTransactionModule } from './inventory-transaction/inventory-transaction.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { InventoryManagementModule } from './inventory-management/inventory-mana
     WeatherModule,
     InventoryCategoryModule,
     InventoryManagementModule,
+    InventoryTransactionModule,
   ],
 })
 export class AppModule {}
