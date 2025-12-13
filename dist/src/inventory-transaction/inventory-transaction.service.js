@@ -51,6 +51,20 @@ let InventoryTransactionService = class InventoryTransactionService {
                 if (newStock < 0) {
                     throw new common_1.BadRequestException('Insufficient stock for this transaction');
                 }
+                const minimumStockThreshold = await this.prisma.inventoryManagement.findFirst({
+                    where: { id: createInventoryTransactionDto.inventoryId },
+                    select: { minimum_stock_level_alert: true },
+                });
+                if (minimumStockThreshold &&
+                    newStock <= minimumStockThreshold.minimum_stock_level_alert) {
+                    return await this.prisma.inventoryTransaction.create({
+                        data: {
+                            ...createInventoryTransactionDto,
+                            stock: newStock,
+                            notes: `Alert: Stock has fallen below the minimum threshold of ${minimumStockThreshold.minimum_stock_level_alert}. Current stock is ${newStock}.`
+                        },
+                    });
+                }
                 return await this.prisma.inventoryTransaction.create({
                     data: {
                         ...createInventoryTransactionDto,
