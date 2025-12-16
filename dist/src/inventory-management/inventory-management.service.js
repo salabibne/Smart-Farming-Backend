@@ -38,14 +38,53 @@ let InventoryManagementService = class InventoryManagementService {
             };
         }
     }
-    findAll() {
-        return `This action returns all inventoryManagement`;
+    async findAll() {
+        try {
+            const inventoriesItems = await this.prisma.inventoryManagement.findMany({
+                include: {
+                    category: true,
+                    transactions: {
+                        orderBy: { createdAt: 'desc' },
+                        take: 1,
+                    },
+                },
+            });
+            return {
+                message: 'Inventory items retrieved successfully',
+                status: 200,
+                data: inventoriesItems,
+            };
+        }
+        catch (error) {
+            return {
+                message: 'Error retrieving inventory items',
+                status: 500,
+                error: error.message,
+            };
+        }
     }
     findOne(id) {
         return `This action returns a #${id} inventoryManagement`;
     }
-    update(id, updateInventoryManagementDto) {
-        return `This action updates a #${id} inventoryManagement`;
+    async update(id, updateInventoryManagementDto) {
+        const item = await this.prisma.inventoryManagement.findUnique({
+            where: { id },
+        });
+        if (!item) {
+            return {
+                message: 'Inventory item not found',
+                status: 404,
+            };
+        }
+        const updatedItem = await this.prisma.inventoryManagement.update({
+            where: { id },
+            data: updateInventoryManagementDto,
+        });
+        return {
+            message: 'Inventory item updated successfully',
+            data: updatedItem,
+            status: 200,
+        };
     }
     remove(id) {
         return `This action removes a #${id} inventoryManagement`;

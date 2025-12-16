@@ -26,12 +26,17 @@ let InventoryTransactionService = class InventoryTransactionService {
             if (createInventoryTransactionDto.stockType === 'IN') {
                 const newStock = (item?.stock ?? 0) +
                     createInventoryTransactionDto.transactionQuantity;
-                return await this.prisma.inventoryTransaction.create({
+                const stockedInItem = await this.prisma.inventoryTransaction.create({
                     data: {
                         ...createInventoryTransactionDto,
                         stock: newStock,
                     },
                 });
+                return {
+                    message: 'Stock IN processed successfully',
+                    data: stockedInItem,
+                    status: 201,
+                };
             }
         }
         catch (error) {
@@ -49,7 +54,10 @@ let InventoryTransactionService = class InventoryTransactionService {
                 const newStock = (item?.stock ?? 0) -
                     createInventoryTransactionDto.transactionQuantity;
                 if (newStock < 0) {
-                    throw new common_1.BadRequestException('Insufficient stock for this transaction');
+                    return {
+                        message: 'Insufficient stock for this transaction',
+                        status: 400,
+                    };
                 }
                 const minimumStockThreshold = await this.prisma.inventoryManagement.findFirst({
                     where: { id: createInventoryTransactionDto.inventoryId },
@@ -57,20 +65,29 @@ let InventoryTransactionService = class InventoryTransactionService {
                 });
                 if (minimumStockThreshold &&
                     newStock <= minimumStockThreshold.minimum_stock_level_alert) {
-                    return await this.prisma.inventoryTransaction.create({
+                    const lowStockOut = await this.prisma.inventoryTransaction.create({
                         data: {
                             ...createInventoryTransactionDto,
                             stock: newStock,
-                            notes: `Alert: Stock has fallen below the minimum threshold of ${minimumStockThreshold.minimum_stock_level_alert}. Current stock is ${newStock}.`
                         },
                     });
+                    return {
+                        message: 'Stock OUT processed with low stock alert',
+                        data: lowStockOut,
+                        status: 201,
+                    };
                 }
-                return await this.prisma.inventoryTransaction.create({
+                const stockOut = await this.prisma.inventoryTransaction.create({
                     data: {
                         ...createInventoryTransactionDto,
                         stock: newStock,
                     },
                 });
+                return {
+                    message: 'Stock OUT processed successfully',
+                    data: stockOut,
+                    status: 201,
+                };
             }
         }
         catch (error) {
@@ -81,17 +98,34 @@ let InventoryTransactionService = class InventoryTransactionService {
             throw new common_1.InternalServerErrorException('Failed to process stock OUT');
         }
     }
-    findAll() {
-        return `This action returns all inventoryTransaction`;
+    async findAll() {
+        const findTransactions = await this.prisma.inventoryTransaction.findMany({
+            orderBy: { createdAt: 'desc' },
+            include: { inventory: true },
+        });
+        return {
+            data: findTransactions,
+            message: 'Transactions retrieved successfully',
+            status: 200,
+        };
     }
-    findOne(id) {
-        return `This action returns a #${id} inventoryTransaction`;
-    }
-    update(id, updateInventoryTransactionDto) {
-        return `This action updates a #${id} inventoryTransaction`;
-    }
-    remove(id) {
-        return `This action removes a #${id} inventoryTransaction`;
+    async findOne(id) {
+        try {
+            const transaction = await this.prisma.inventoryTransaction.findMany({
+                where: { inventoryId: id },
+                orderBy: { createdAt: 'desc' },
+                include: { inventory: true },
+            });
+            return {
+                data: transaction,
+                message: 'Transaction retrieved successfully',
+                status: 200,
+            };
+        }
+        catch (error) {
+            console.error('Find One Error:', error);
+            throw new common_1.InternalServerErrorException('Failed to retrieve transaction');
+        }
     }
 };
 exports.InventoryTransactionService = InventoryTransactionService;

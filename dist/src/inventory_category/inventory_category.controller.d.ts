@@ -28,6 +28,18 @@ export declare class InventoryCategoryController {
             description: string | null;
         }[];
     }>;
+    findCategoriesActive(): Promise<{
+        message: string;
+        status: number;
+        data: {
+            name: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.StatusInventory;
+            description: string | null;
+        }[];
+    }>;
     findOne(id: string): Promise<{
         message: string;
         status: number;
@@ -44,6 +56,32 @@ export declare class InventoryCategoryController {
             description: string | null;
         };
     }>;
-    update(id: string, updateInventoryCategoryDto: UpdateInventoryCategoryDto): string;
-    remove(id: string): string;
+    update(id: string, updateInventoryCategoryDto: UpdateInventoryCategoryDto): Promise<{
+        message: string;
+        status: number;
+        data: {
+            name: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.StatusInventory;
+            description: string | null;
+        };
+    }>;
+    remove(id: string): Promise<{
+        message: string;
+        status: number;
+        data?: undefined;
+    } | {
+        message: string;
+        status: number;
+        data: {
+            name: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.StatusInventory;
+            description: string | null;
+        };
+    }>;
 }

@@ -35,6 +35,16 @@ let InventoryCategoryService = class InventoryCategoryService {
             data: categories,
         };
     }
+    async findCategoriesActive() {
+        const categories = await this.prisma.inventoryCategory.findMany({
+            where: { status: 'ACTIVE' },
+        });
+        return {
+            message: 'Active inventory categories retrieved successfully',
+            status: 200,
+            data: categories,
+        };
+    }
     async findOne(id) {
         const category = await this.prisma.inventoryCategory.findUnique({
             where: { id },
@@ -51,11 +61,35 @@ let InventoryCategoryService = class InventoryCategoryService {
             data: category,
         };
     }
-    update(id, updateInventoryCategoryDto) {
-        return `This action updates a #${id} inventoryCategory`;
+    async update(id, updateInventoryCategoryDto) {
+        const updatedCategory = await this.prisma.inventoryCategory.update({
+            where: { id },
+            data: updateInventoryCategoryDto,
+        });
+        return {
+            message: 'Inventory category updated successfully',
+            status: 200,
+            data: updatedCategory,
+        };
     }
-    remove(id) {
-        return `This action removes a #${id} inventoryCategory`;
+    async remove(id) {
+        const count = await this.prisma.inventoryManagement.count({
+            where: { categoryId: id },
+        });
+        if (count > 0) {
+            return {
+                message: 'Cannot delete category with associated inventory items',
+                status: 400,
+            };
+        }
+        const deleteCategory = await this.prisma.inventoryCategory.delete({
+            where: { id },
+        });
+        return {
+            message: 'Inventory category deleted successfully',
+            status: 200,
+            data: deleteCategory,
+        };
     }
 };
 exports.InventoryCategoryService = InventoryCategoryService;

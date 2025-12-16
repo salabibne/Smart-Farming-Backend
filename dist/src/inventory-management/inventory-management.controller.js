@@ -32,10 +32,10 @@ let InventoryManagementController = class InventoryManagementController {
         return this.inventoryManagementService.findOne(+id);
     }
     update(id, updateInventoryManagementDto) {
-        return this.inventoryManagementService.update(+id, updateInventoryManagementDto);
+        return this.inventoryManagementService.update(id, updateInventoryManagementDto);
     }
     remove(id) {
-        return this.inventoryManagementService.remove(+id);
+        return this.inventoryManagementService.remove(id);
     }
 };
 exports.InventoryManagementController = InventoryManagementController;
@@ -60,7 +60,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], InventoryManagementController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Patch)(':id'),
+    (0, common_1.Patch)('/update/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),

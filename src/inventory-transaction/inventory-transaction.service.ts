@@ -6,6 +6,7 @@ import {
 import { CreateInventoryTransactionDto } from './dto/create-inventory-transaction.dto';
 import { UpdateInventoryTransactionDto } from './dto/update-inventory-transaction.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { stat } from 'fs';
 
 @Injectable()
 export class InventoryTransactionService {
@@ -23,12 +24,17 @@ export class InventoryTransactionService {
           (item?.stock ?? 0) +
           createInventoryTransactionDto.transactionQuantity;
 
-        return await this.prisma.inventoryTransaction.create({
+        const stockedInItem = await this.prisma.inventoryTransaction.create({
           data: {
             ...createInventoryTransactionDto,
             stock: newStock,
           },
         });
+        return {
+          message: 'Stock IN processed successfully',
+          data: stockedInItem,
+          status: 201,
+        };
       }
     } catch (error) {
       console.error('Stock IN Error:', error);
@@ -49,9 +55,10 @@ export class InventoryTransactionService {
           createInventoryTransactionDto.transactionQuantity;
 
         if (newStock < 0) {
-          throw new BadRequestException(
-            'Insufficient stock for this transaction',
-          );
+          return {
+            message: 'Insufficient stock for this transaction',
+            status: 400,
+          };
         }
 
         const minimumStockThreshold =
@@ -64,21 +71,30 @@ export class InventoryTransactionService {
           minimumStockThreshold &&
           newStock <= minimumStockThreshold.minimum_stock_level_alert
         ) {
-          return await this.prisma.inventoryTransaction.create({
+          const lowStockOut = await this.prisma.inventoryTransaction.create({
             data: {
               ...createInventoryTransactionDto,
               stock: newStock,
-              notes: `Alert: Stock has fallen below the minimum threshold of ${minimumStockThreshold.minimum_stock_level_alert}. Current stock is ${newStock}.`
             },
           });
+          return {
+            message: 'Stock OUT processed with low stock alert',
+            data: lowStockOut,
+            status: 201,
+          };
         }
 
-        return await this.prisma.inventoryTransaction.create({
+        const stockOut = await this.prisma.inventoryTransaction.create({
           data: {
             ...createInventoryTransactionDto,
             stock: newStock,
           },
         });
+        return {
+          message: 'Stock OUT processed successfully',
+          data: stockOut,
+          status: 201,
+        };
       }
     } catch (error) {
       console.error('Stock OUT Error:', error);
@@ -91,22 +107,40 @@ export class InventoryTransactionService {
     }
   }
 
-  findAll() {
-    return `This action returns all inventoryTransaction`;
+  async findAll() {
+    const findTransactions = await this.prisma.inventoryTransaction.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { inventory: true },
+    });
+    return {
+      data: findTransactions,
+      message: 'Transactions retrieved successfully',
+      status: 200,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} inventoryTransaction`;
+  async findOne(id: string) {
+    try {
+      const transaction = await this.prisma.inventoryTransaction.findMany({
+        where: { inventoryId: id },
+        orderBy: { createdAt: 'desc' },
+        include: { inventory: true },
+      });
+      return {
+        data: transaction,
+        message: 'Transaction retrieved successfully',
+        status: 200,
+      };
+    } catch (error) {
+      console.error('Find One Error:', error);
+      throw new InternalServerErrorException('Failed to retrieve transaction');
+    }
   }
 
-  update(
-    id: number,
-    updateInventoryTransactionDto: UpdateInventoryTransactionDto,
-  ) {
-    return `This action updates a #${id} inventoryTransaction`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} inventoryTransaction`;
-  }
 }
+
+
+
+
+

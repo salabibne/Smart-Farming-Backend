@@ -25,6 +25,17 @@ export class InventoryCategoryService {
     };
   }
 
+  async findCategoriesActive(){
+    const categories = await this.prisma.inventoryCategory.findMany({
+      where: { status: 'ACTIVE' },
+    });
+    return {
+      message: 'Active inventory categories retrieved successfully',
+      status: 200,
+      data: categories,
+    };
+  }
+
   async findOne(id: string) {
     const category = await this.prisma.inventoryCategory.findUnique({
       where: { id },
@@ -42,11 +53,40 @@ export class InventoryCategoryService {
     };
   }
 
-  update(id: number, updateInventoryCategoryDto: UpdateInventoryCategoryDto) {
-    return `This action updates a #${id} inventoryCategory`;
+  async update(
+    id: string,
+    updateInventoryCategoryDto: UpdateInventoryCategoryDto,
+  ) {
+    const updatedCategory = await this.prisma.inventoryCategory.update({
+      where: { id },
+      data: updateInventoryCategoryDto,
+    });
+    return {
+      message: 'Inventory category updated successfully',
+      status: 200,
+      data: updatedCategory,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} inventoryCategory`;
+  async remove(id: string) {
+    // check if the category exists
+    const count = await this.prisma.inventoryManagement.count({
+      where: { categoryId: id },
+    });
+    if (count > 0) {
+      return {
+        message: 'Cannot delete category with associated inventory items',
+        status: 400,
+      };
+    }
+    const deleteCategory = await this.prisma.inventoryCategory.delete({
+      where: { id },
+    });
+
+    return {
+      message: 'Inventory category deleted successfully',
+      status: 200,
+      data: deleteCategory,
+    };
   }
 }

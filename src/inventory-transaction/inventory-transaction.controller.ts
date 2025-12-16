@@ -24,16 +24,16 @@ export class InventoryTransactionController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.inventoryTransactionService.findOne(+id);
+    return this.inventoryTransactionService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateInventoryTransactionDto: UpdateInventoryTransactionDto) {
-    return this.inventoryTransactionService.update(+id, updateInventoryTransactionDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateInventoryTransactionDto: UpdateInventoryTransactionDto) {
+  //   return this.inventoryTransactionService.update(+id, updateInventoryTransactionDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.inventoryTransactionService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.inventoryTransactionService.remove(id);
+  // }
 }

@@ -22,13 +22,13 @@ export class InventoryManagementController {
     return this.inventoryManagementService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch('/update/:id')
   update(@Param('id') id: string, @Body() updateInventoryManagementDto: UpdateInventoryManagementDto) {
-    return this.inventoryManagementService.update(+id, updateInventoryManagementDto);
+    return this.inventoryManagementService.update(id, updateInventoryManagementDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.inventoryManagementService.remove(+id);
+    return this.inventoryManagementService.remove(id);
   }
 }

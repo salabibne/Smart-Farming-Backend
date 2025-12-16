@@ -28,14 +28,17 @@ let InventoryCategoryController = class InventoryCategoryController {
     findAll() {
         return this.inventoryCategoryService.findAll();
     }
+    findCategoriesActive() {
+        return this.inventoryCategoryService.findCategoriesActive();
+    }
     findOne(id) {
         return this.inventoryCategoryService.findOne(id);
     }
     update(id, updateInventoryCategoryDto) {
-        return this.inventoryCategoryService.update(+id, updateInventoryCategoryDto);
+        return this.inventoryCategoryService.update(id, updateInventoryCategoryDto);
     }
     remove(id) {
-        return this.inventoryCategoryService.remove(+id);
+        return this.inventoryCategoryService.remove(id);
     }
 };
 exports.InventoryCategoryController = InventoryCategoryController;
@@ -53,6 +56,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], InventoryCategoryController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('get-active-categories'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], InventoryCategoryController.prototype, "findCategoriesActive", null);
+__decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -60,7 +69,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], InventoryCategoryController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Patch)(':id'),
+    (0, common_1.Patch)('/update/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -68,7 +77,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], InventoryCategoryController.prototype, "update", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
+    (0, common_1.Delete)('/delete/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

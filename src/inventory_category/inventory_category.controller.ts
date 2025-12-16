@@ -17,18 +17,23 @@ export class InventoryCategoryController {
     return this.inventoryCategoryService.findAll();
   }
 
+  @Get('get-active-categories')
+  findCategoriesActive() {
+    return this.inventoryCategoryService.findCategoriesActive();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.inventoryCategoryService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('/update/:id')
   update(@Param('id') id: string, @Body() updateInventoryCategoryDto: UpdateInventoryCategoryDto) {
-    return this.inventoryCategoryService.update(+id, updateInventoryCategoryDto);
+    return this.inventoryCategoryService.update(id, updateInventoryCategoryDto);
   }
 
-  @Delete(':id')
+  @Delete('/delete/:id')
   remove(@Param('id') id: string) {
-    return this.inventoryCategoryService.remove(+id);
+    return this.inventoryCategoryService.remove(id);
   }
 }
