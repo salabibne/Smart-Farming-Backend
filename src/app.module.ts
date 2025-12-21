@@ -7,6 +7,7 @@ import { WeatherModule } from './weather/weather.module';
 import { InventoryCategoryModule } from './inventory_category/inventory_category.module';
 import { InventoryManagementModule } from './inventory-management/inventory-management.module';
 import { InventoryTransactionModule } from './inventory-transaction/inventory-transaction.module';
+import { FinanceModule } from './finance/finance.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { InventoryTransactionModule } from './inventory-transaction/inventory-tr
     InventoryCategoryModule,
     InventoryManagementModule,
     InventoryTransactionModule,
+    FinanceModule,
   ],
 })
 export class AppModule {}

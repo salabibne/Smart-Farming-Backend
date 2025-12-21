@@ -78,7 +78,8 @@ model InventoryManagement{
   category           InventoryCategory @relation(fields: [categoryId], references: [id])
   createdAt          DateTime        @default(now()) @db.Timestamp(6)
   updatedAt          DateTime        @updatedAt @db.Timestamp(6)
-  transactions InventoryTransaction[]  
+  transactions InventoryTransaction[]
+  finance Finnace[]
   
 }
 enum StockType {
@@ -107,6 +108,46 @@ model InventoryTransaction {
   stock  Int
   transactionDate  DateTime        @default(now()) @db.Timestamp(6)
   notes            String?         @db.VarChar
+  createdAt        DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime        @updatedAt @db.Timestamp(6)
+}
+
+// Finance 
+enum TransactionType {
+  INCOME
+  EXPENSE
+
+}
+enum paymentMethod {
+  CASH
+  CREDIT_CARD
+  BANK_TRANSFER
+  MOBILE_PAYMENT
+}
+enum TransactionCategory {
+  SALE
+  PURCHASE
+  RETURN
+  DAMAGE
+  ADJUSTMENT
+  SALARY
+  RENT
+  UTILITIES
+  MAINTENANCE
+  LOGISTICS
+  OTHER
+}
+model Finnace{
+  id                String          @id @default(uuid())
+  amount            Float
+  transactionType   TransactionType
+  transactionCategory  TransactionCategory
+  notes      String?         @db.VarChar
+  paymentMethod     paymentMethod@default(CASH)
+  transactionId      String
+  inventoryId      String?
+  inventory         InventoryManagement? @relation(fields: [inventoryId], references: [id])
+  transactionDate  DateTime        @default(now()) @db.Timestamp(6)
   createdAt        DateTime        @default(now()) @db.Timestamp(6)
   updatedAt        DateTime        @updatedAt @db.Timestamp(6)
 }

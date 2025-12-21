@@ -1,3 +1,10 @@
+// stockIn, stock out, find all transactions, find one transaction by inventory id 
+// inventory-transaction.service.ts
+// Handles inventory transactions such as stock in and stock out operations,
+// as well as retrieving transaction records.
+
+
+
 import {
   Injectable,
   BadRequestException,

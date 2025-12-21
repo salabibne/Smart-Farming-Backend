@@ -16,6 +16,7 @@ const weather_module_1 = require("./weather/weather.module");
 const inventory_category_module_1 = require("./inventory_category/inventory_category.module");
 const inventory_management_module_1 = require("./inventory-management/inventory-management.module");
 const inventory_transaction_module_1 = require("./inventory-transaction/inventory-transaction.module");
+const finance_module_1 = require("./finance/finance.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -37,6 +38,7 @@ exports.AppModule = AppModule = __decorate([
             inventory_category_module_1.InventoryCategoryModule,
             inventory_management_module_1.InventoryManagementModule,
             inventory_transaction_module_1.InventoryTransactionModule,
+            finance_module_1.FinanceModule,
         ],
     })
 ], AppModule);
