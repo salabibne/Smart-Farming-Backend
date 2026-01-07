@@ -8,60 +8,60 @@ export declare class FinanceController {
         status: number;
         data: {
             inventory: {
+                name: string;
                 id: string;
-                notes: string | null;
                 createdAt: Date;
                 updatedAt: Date;
-                name: string;
+                status: import(".prisma/client").$Enums.StatusInventory;
+                categoryId: string;
                 minimum_stock_level_alert: number;
                 unit: import(".prisma/client").$Enums.UnitType;
                 cost_per_unit: number;
                 supplier_name: string | null;
                 supplier_contact: string | null;
-                status: import(".prisma/client").$Enums.StatusInventory;
-                categoryId: string;
+                notes: string | null;
             } | null;
         } & {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            notes: string | null;
+            inventoryId: string | null;
+            transactionDate: Date;
             amount: number;
             transactionType: import(".prisma/client").$Enums.TransactionType;
             transactionCategory: import(".prisma/client").$Enums.TransactionCategory;
-            notes: string | null;
             paymentMethod: import(".prisma/client").$Enums.paymentMethod;
             transactionId: string;
-            inventoryId: string | null;
-            transactionDate: Date;
-            createdAt: Date;
-            updatedAt: Date;
         };
     }>;
     findAll(): Promise<({
         inventory: {
+            name: string;
             id: string;
-            notes: string | null;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
+            status: import(".prisma/client").$Enums.StatusInventory;
+            categoryId: string;
             minimum_stock_level_alert: number;
             unit: import(".prisma/client").$Enums.UnitType;
             cost_per_unit: number;
             supplier_name: string | null;
             supplier_contact: string | null;
-            status: import(".prisma/client").$Enums.StatusInventory;
-            categoryId: string;
+            notes: string | null;
         } | null;
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        notes: string | null;
+        inventoryId: string | null;
+        transactionDate: Date;
         amount: number;
         transactionType: import(".prisma/client").$Enums.TransactionType;
         transactionCategory: import(".prisma/client").$Enums.TransactionCategory;
-        notes: string | null;
         paymentMethod: import(".prisma/client").$Enums.paymentMethod;
         transactionId: string;
-        inventoryId: string | null;
-        transactionDate: Date;
-        createdAt: Date;
-        updatedAt: Date;
     })[]>;
     calculateNetBalance(): Promise<{
         totalIncome: number;
@@ -70,15 +70,15 @@ export declare class FinanceController {
     }>;
     findByCategory(category: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        notes: string | null;
+        inventoryId: string | null;
+        transactionDate: Date;
         amount: number;
         transactionType: import(".prisma/client").$Enums.TransactionType;
         transactionCategory: import(".prisma/client").$Enums.TransactionCategory;
-        notes: string | null;
         paymentMethod: import(".prisma/client").$Enums.paymentMethod;
         transactionId: string;
-        inventoryId: string | null;
-        transactionDate: Date;
-        createdAt: Date;
-        updatedAt: Date;
     }[]>;
 }

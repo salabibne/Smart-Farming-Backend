@@ -41,10 +41,10 @@ export declare class InventoryManagementController {
                 notes: string | null;
                 inventoryId: string;
                 stockType: import(".prisma/client").$Enums.StockType;
-                purpose: import(".prisma/client").$Enums.PurposeType;
                 transactionQuantity: number;
-                stock: number;
                 transactionDate: Date;
+                purpose: import(".prisma/client").$Enums.PurposeType;
+                stock: number;
             }[];
         } & {
             name: string;

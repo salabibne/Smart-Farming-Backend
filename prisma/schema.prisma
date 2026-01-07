@@ -21,71 +21,114 @@ model User {
   profile                  Profile?
 }
 
-model Profile{
-  id        String   @id @default(uuid())
-  bio       String?  @db.VarChar
-  role     Role   @default(USER)
-  address  Json?
-  userId    String  
-  user      User    @relation(fields: [userId], references: [id])
-  @@unique([userId])
+model Profile {
+  id      String  @id @default(uuid())
+  bio     String? @db.VarChar
+  userId  String  @unique
+  address Json?
+  role    Role    @default(USER)
+  user    User    @relation(fields: [userId], references: [id])
+}
 
+model InventoryCategory {
+  id          String                @id @default(uuid())
+  name        String                @db.VarChar
+  description String?               @db.VarChar
+  status      StatusInventory       @default(ACTIVE)
+  createdAt   DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime              @updatedAt @db.Timestamp(6)
+  inventories InventoryManagement[]
+}
+
+model InventoryManagement {
+  id                        String                 @id @default(uuid())
+  name                      String                 @db.VarChar
+  minimum_stock_level_alert Int
+  unit                      UnitType
+  cost_per_unit             Float
+  supplier_name             String?                @db.VarChar
+  supplier_contact          String?                @db.VarChar
+  status                    StatusInventory        @default(ACTIVE)
+  notes                     String?                @db.VarChar
+  categoryId                String
+  createdAt                 DateTime               @default(now()) @db.Timestamp(6)
+  updatedAt                 DateTime               @updatedAt @db.Timestamp(6)
+  finance                   Finnace[]
+  category                  InventoryCategory      @relation(fields: [categoryId], references: [id])
+  transactions              InventoryTransaction[]
+}
+
+model InventoryTransaction {
+  id                  String              @id @default(uuid())
+  inventoryId         String
+  stockType           StockType
+  transactionQuantity Int
+  transactionDate     DateTime            @default(now()) @db.Timestamp(6)
+  notes               String?             @db.VarChar
+  createdAt           DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime            @updatedAt @db.Timestamp(6)
+  purpose             PurposeType
+  stock               Int
+  inventory           InventoryManagement @relation(fields: [inventoryId], references: [id])
+}
+
+model Finnace {
+  id                  String               @id @default(uuid())
+  amount              Float
+  transactionType     TransactionType
+  transactionCategory TransactionCategory
+  notes               String?              @db.VarChar
+  paymentMethod       paymentMethod        @default(CASH)
+  transactionId       String
+  inventoryId         String?
+  transactionDate     DateTime             @default(now()) @db.Timestamp(6)
+  createdAt           DateTime             @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime             @updatedAt @db.Timestamp(6)
+  inventory           InventoryManagement? @relation(fields: [inventoryId], references: [id])
+}
+
+model ProductFromMarket {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar
+  description String?  @db.VarChar
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt @db.Timestamp(6)
+}
+
+model productpricefrommarket {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar
+  category    String   @db.VarChar
+  category_id String   @db.VarChar
+  weight      String   @db.VarChar
+  price       String   @db.VarChar
+  source      String   @db.VarChar
+  scraped_at  DateTime @db.Timestamp(6)
 }
 
 enum Role {
- USER
- ADMIN
- 
+  USER
+  ADMIN
 }
-
-// Inventory 
 
 enum StatusInventory {
   ACTIVE
   INACTIVE
 }
 
-model InventoryCategory {
-  id          String          @id @default(uuid())
-  name        String          @db.VarChar
-  description String?         @db.VarChar
-  status      StatusInventory @default(ACTIVE)
-  createdAt   DateTime        @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime        @updatedAt @db.Timestamp(6)
-  inventories InventoryManagement[]  
-  
-}
-
 enum UnitType {
   KG
-  Liters 
-  Bags 
-  Pieces 
+  Liters
+  Bags
+  Pieces
   Tons
+}
 
-}
-model InventoryManagement{
-  id                String          @id @default(uuid())
-  name              String                @db.VarChar
-  minimum_stock_level_alert  Int
-  unit             UnitType 
-  cost_per_unit    Float
-  supplier_name    String?          @db.VarChar
-  supplier_contact  String?          @db.VarChar
-  status         StatusInventory @default(ACTIVE)
-  notes           String?         @db.VarChar
-  categoryId         String
-  category           InventoryCategory @relation(fields: [categoryId], references: [id])
-  createdAt          DateTime        @default(now()) @db.Timestamp(6)
-  updatedAt          DateTime        @updatedAt @db.Timestamp(6)
-  transactions InventoryTransaction[]
-  finance Finnace[]
-  
-}
 enum StockType {
   IN
   OUT
 }
+
 enum PurposeType {
   SALE
   PURCHASE
@@ -95,61 +138,28 @@ enum PurposeType {
   INITIATE_STOCK
 }
 
-// transactionQuantity ==> quantity added or removed in the transaction
-// stock ==> current quantity after the transaction
-
-model InventoryTransaction {
-  id                 String          @id @default(uuid())
-  inventoryId      String
-  inventory         InventoryManagement @relation(fields: [inventoryId], references: [id])
-  stockType  StockType
-  purpose          PurposeType
-  transactionQuantity         Int
-  stock  Int
-  transactionDate  DateTime        @default(now()) @db.Timestamp(6)
-  notes            String?         @db.VarChar
-  createdAt        DateTime        @default(now()) @db.Timestamp(6)
-  updatedAt        DateTime        @updatedAt @db.Timestamp(6)
-}
-
-// Finance 
 enum TransactionType {
   INCOME
   EXPENSE
-
 }
+
 enum paymentMethod {
   CASH
   CREDIT_CARD
   BANK_TRANSFER
   MOBILE_PAYMENT
 }
+
 enum TransactionCategory {
   SALE
   PURCHASE
-  RETURN
-  DAMAGE
-  ADJUSTMENT
   SALARY
   RENT
   UTILITIES
   MAINTENANCE
-  LOGISTICS
   OTHER
+  LOGISTICS
+  RETURN
+  DAMAGE
+  ADJUSTMENT
 }
-model Finnace{
-  id                String          @id @default(uuid())
-  amount            Float
-  transactionType   TransactionType
-  transactionCategory  TransactionCategory
-  notes      String?         @db.VarChar
-  paymentMethod     paymentMethod@default(CASH)
-  transactionId      String
-  inventoryId      String?
-  inventory         InventoryManagement? @relation(fields: [inventoryId], references: [id])
-  transactionDate  DateTime        @default(now()) @db.Timestamp(6)
-  createdAt        DateTime        @default(now()) @db.Timestamp(6)
-  updatedAt        DateTime        @updatedAt @db.Timestamp(6)
-}
-
-

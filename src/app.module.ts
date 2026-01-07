@@ -8,6 +8,7 @@ import { InventoryCategoryModule } from './inventory_category/inventory_category
 import { InventoryManagementModule } from './inventory-management/inventory-management.module';
 import { InventoryTransactionModule } from './inventory-transaction/inventory-transaction.module';
 import { FinanceModule } from './finance/finance.module';
+import { MarketInformationModule } from './market-information/market-information.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { FinanceModule } from './finance/finance.module';
     InventoryManagementModule,
     InventoryTransactionModule,
     FinanceModule,
+    MarketInformationModule,
   ],
 })
 export class AppModule {}
