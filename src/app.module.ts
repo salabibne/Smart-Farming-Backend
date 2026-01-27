@@ -9,6 +9,7 @@ import { InventoryManagementModule } from './inventory-management/inventory-mana
 import { InventoryTransactionModule } from './inventory-transaction/inventory-transaction.module';
 import { FinanceModule } from './finance/finance.module';
 import { MarketInformationModule } from './market-information/market-information.module';
+import { FieldModule } from './field/field.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MarketInformationModule } from './market-information/market-information
     InventoryTransactionModule,
     FinanceModule,
     MarketInformationModule,
+    FieldModule,
   ],
 })
 export class AppModule {}

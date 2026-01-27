@@ -33,6 +33,9 @@ let FinanceController = class FinanceController {
     findByCategory(category) {
         return this.financeService.findByCategory(category);
     }
+    getDashboardKPIs(from, to) {
+        return this.financeService.getDashboardKPIs(from, to);
+    }
 };
 exports.FinanceController = FinanceController;
 __decorate([
@@ -61,6 +64,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], FinanceController.prototype, "findByCategory", null);
+__decorate([
+    (0, common_1.Get)('dashboard/kpi'),
+    __param(0, (0, common_1.Query)('from')),
+    __param(1, (0, common_1.Query)('to')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], FinanceController.prototype, "getDashboardKPIs", null);
 exports.FinanceController = FinanceController = __decorate([
     (0, common_1.Controller)('finance'),
     __metadata("design:paramtypes", [finance_service_1.FinanceService])

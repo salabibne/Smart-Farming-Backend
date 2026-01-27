@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { FinanceService } from './finance.service';
 import { CreateFinanceDto } from './dto/create-finance.dto';
@@ -48,5 +49,10 @@ export class FinanceController {
   @Get('category/:category')
   findByCategory(@Param('category') category: string) {
     return this.financeService.findByCategory(category);
+  }
+
+  @Get('dashboard/kpi')
+  getDashboardKPIs(@Query('from') from?: string, @Query('to') to?: string) {
+    return this.financeService.getDashboardKPIs(from, to);
   }
 }

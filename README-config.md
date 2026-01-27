@@ -11,4 +11,5 @@ main_portal_password : `123`
 Run  when new model declared `npx prisma migrate dev --name init`
 Run for prisma client `npx prisma generate`
 see database at a glance `npx prisma studio`
+Synchronize Schema `npx prisma db pull`
 

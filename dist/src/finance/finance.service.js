@@ -84,6 +84,67 @@ let FinanceService = class FinanceService {
             },
         });
     }
+    async getDashboardKPIs(from, to) {
+        const dateFilter = from && to
+            ? {
+                transactionDate: {
+                    gte: new Date(from),
+                    lte: new Date(to),
+                },
+            }
+            : {};
+        const incomeResult = await this.prisma.finnace.aggregate({
+            _sum: { amount: true },
+            where: {
+                transactionType: 'INCOME',
+                ...dateFilter,
+            },
+        });
+        const expenseResult = await this.prisma.finnace.aggregate({
+            _sum: { amount: true },
+            where: {
+                transactionType: 'EXPENSE',
+                ...dateFilter,
+            },
+        });
+        const totalIncome = incomeResult._sum.amount || 0;
+        const totalExpense = expenseResult._sum.amount || 0;
+        const netProfit = totalIncome - totalExpense;
+        const totalTransactions = await this.prisma.finnace.count({
+            where: {
+                ...dateFilter,
+            },
+        });
+        const highestExpenseCategory = await this.prisma.finnace.groupBy({
+            by: ['transactionCategory'],
+            where: {
+                transactionType: 'EXPENSE',
+                ...dateFilter,
+            },
+            _sum: {
+                amount: true,
+            },
+            orderBy: {
+                _sum: {
+                    amount: 'desc',
+                },
+            },
+            take: 1,
+        });
+        return {
+            period: from && to ? { from, to } : 'ALL_TIME',
+            totalIncome,
+            totalExpense,
+            netProfit,
+            totalTransactions,
+            highestExpenseCategory: highestExpenseCategory.length > 0
+                ? {
+                    category: highestExpenseCategory[0].transactionCategory,
+                    amount: highestExpenseCategory[0]._sum.amount,
+                }
+                : null,
+        };
+    }
 };
 exports.FinanceService = FinanceService;
 exports.FinanceService = FinanceService = __decorate([

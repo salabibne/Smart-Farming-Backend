@@ -109,4 +109,81 @@ export class FinanceService {
       },
     });
   }
+
+  async getDashboardKPIs(from?: string, to?: string) {
+    // Build date filter only if dates are provided
+    const dateFilter =
+      from && to
+        ? {
+            transactionDate: {
+              gte: new Date(from),
+              lte: new Date(to),
+            },
+          }
+        : {};
+
+    // 1. Total Income
+    const incomeResult = await this.prisma.finnace.aggregate({
+      _sum: { amount: true },
+      where: {
+        transactionType: 'INCOME',
+        ...dateFilter,
+      },
+    });
+
+    // 2. Total Expense
+    const expenseResult = await this.prisma.finnace.aggregate({
+      _sum: { amount: true },
+      where: {
+        transactionType: 'EXPENSE',
+        ...dateFilter,
+      },
+    });
+
+    const totalIncome = incomeResult._sum.amount || 0;
+    const totalExpense = expenseResult._sum.amount || 0;
+
+    // 3. Net Profit
+    const netProfit = totalIncome - totalExpense;
+
+    // 4. Number of Transactions
+    const totalTransactions = await this.prisma.finnace.count({
+      where: {
+        ...dateFilter,
+      },
+    });
+
+    // 5. Highest Expense Category
+    const highestExpenseCategory = await this.prisma.finnace.groupBy({
+      by: ['transactionCategory'],
+      where: {
+        transactionType: 'EXPENSE',
+        ...dateFilter,
+      },
+      _sum: {
+        amount: true,
+      },
+      orderBy: {
+        _sum: {
+          amount: 'desc',
+        },
+      },
+      take: 1,
+    });
+
+    return {
+      period: from && to ? { from, to } : 'ALL_TIME',
+      totalIncome,
+      totalExpense,
+      netProfit,
+      totalTransactions,
+      highestExpenseCategory:
+        highestExpenseCategory.length > 0
+          ? {
+              category: highestExpenseCategory[0].transactionCategory,
+              amount: highestExpenseCategory[0]._sum.amount,
+            }
+          : null,
+    };
+  }
 }

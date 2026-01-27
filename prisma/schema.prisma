@@ -106,6 +106,65 @@ model productpricefrommarket {
   scraped_at  DateTime @db.Timestamp(6)
 }
 
+model crops {
+  id                   String                @id @db.Uuid
+  name_english         String                @unique @db.VarChar
+  name_bangla          String?               @db.VarChar
+  variety              String?               @db.VarChar
+  category             String?               @db.VarChar
+  growth_duration_days String?               @db.VarChar
+  fertilizer_planning  fertilizer_planning[]
+}
+
+model fertilizer_application_schedule {
+  id                       String                   @id @db.Uuid
+  fertilizer_plan_id       String?                  @db.Uuid
+  stage                    String?                  @db.VarChar
+  timing_days_after_sowing Int?
+  method_of_application    String?
+  fertilizer_planning      fertilizer_planning?     @relation(fields: [fertilizer_plan_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  fertilizer_split_ratio   fertilizer_split_ratio[]
+}
+
+model fertilizer_planning {
+  id                              String                            @id @db.Uuid
+  crop_id                         String?                           @db.Uuid
+  calculation_basis               String?
+  fertilizer_application_schedule fertilizer_application_schedule[]
+  crops                           crops?                            @relation(fields: [crop_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  fertilizer_requirements         fertilizer_requirements[]
+}
+
+model fertilizer_requirements {
+  id                  String               @id @db.Uuid
+  fertilizer_plan_id  String?              @db.Uuid
+  fertilizer_name     String?              @db.VarChar
+  quantity_kg         Decimal?             @db.Decimal(10, 3)
+  fertilizer_planning fertilizer_planning? @relation(fields: [fertilizer_plan_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model fertilizer_split_ratio {
+  id                              String                           @id @db.Uuid
+  schedule_id                     String?                          @db.Uuid
+  fertilizer_name                 String?                          @db.VarChar
+  split_ratio                     Decimal?                         @db.Decimal(4, 2)
+  fertilizer_application_schedule fertilizer_application_schedule? @relation(fields: [schedule_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Field{
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar
+  location  String   @db.VarChar
+  size_Square_Meter  Float
+  imageURL String
+  N Float
+  P Float
+  K Float
+  pH Float
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+}
+
 enum Role {
   USER
   ADMIN

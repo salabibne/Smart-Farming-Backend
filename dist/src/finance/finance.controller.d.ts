@@ -81,4 +81,18 @@ export declare class FinanceController {
         paymentMethod: import(".prisma/client").$Enums.paymentMethod;
         transactionId: string;
     }[]>;
+    getDashboardKPIs(from?: string, to?: string): Promise<{
+        period: string | {
+            from: string;
+            to: string;
+        };
+        totalIncome: number;
+        totalExpense: number;
+        netProfit: number;
+        totalTransactions: number;
+        highestExpenseCategory: {
+            category: import(".prisma/client").$Enums.TransactionCategory;
+            amount: number | null;
+        } | null;
+    }>;
 }
