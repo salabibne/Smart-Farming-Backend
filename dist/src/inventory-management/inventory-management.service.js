@@ -17,9 +17,12 @@ let InventoryManagementService = class InventoryManagementService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async create(createInventoryManagementDto) {
+    async create(createInventoryManagementDto, userId) {
         const inventory = await this.prisma.inventoryManagement.create({
-            data: createInventoryManagementDto,
+            data: {
+                ...createInventoryManagementDto,
+                userId,
+            },
         });
         const stockEntry = await this.prisma.inventoryTransaction.create({
             data: {
@@ -38,9 +41,10 @@ let InventoryManagementService = class InventoryManagementService {
             };
         }
     }
-    async findAll() {
+    async findAll(userId) {
         try {
             const inventoriesItems = await this.prisma.inventoryManagement.findMany({
+                where: { userId },
                 include: {
                     category: true,
                     transactions: {
@@ -66,9 +70,9 @@ let InventoryManagementService = class InventoryManagementService {
     findOne(id) {
         return `This action returns a #${id} inventoryManagement`;
     }
-    async update(id, updateInventoryManagementDto) {
+    async update(id, updateInventoryManagementDto, userId) {
         const item = await this.prisma.inventoryManagement.findUnique({
-            where: { id },
+            where: { id, userId },
         });
         if (!item) {
             return {

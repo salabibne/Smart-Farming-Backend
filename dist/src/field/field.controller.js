@@ -17,61 +17,73 @@ const common_1 = require("@nestjs/common");
 const field_service_1 = require("./field.service");
 const create_field_dto_1 = require("./dto/create-field.dto");
 const update_field_dto_1 = require("./dto/update-field.dto");
+const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
+const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 let FieldController = class FieldController {
     fieldService;
     constructor(fieldService) {
         this.fieldService = fieldService;
     }
-    create(createFieldDto) {
-        return this.fieldService.create(createFieldDto);
+    create(createFieldDto, userId) {
+        return this.fieldService.create(createFieldDto, userId);
     }
-    findAll() {
-        return this.fieldService.findAll();
+    findAll(userId) {
+        return this.fieldService.findAll(userId);
     }
-    findOne(id) {
-        return this.fieldService.findOne(id);
+    findOne(id, userId) {
+        return this.fieldService.findOne(id, userId);
     }
-    update(id, updateFieldDto) {
-        return this.fieldService.update(id, updateFieldDto);
+    update(id, updateFieldDto, userId) {
+        return this.fieldService.update(id, updateFieldDto, userId);
     }
-    remove(id) {
-        return this.fieldService.remove(id);
+    remove(id, userId) {
+        return this.fieldService.remove(id, userId);
     }
 };
 exports.FieldController = FieldController;
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_field_dto_1.CreateFieldDto]),
+    __metadata("design:paramtypes", [create_field_dto_1.CreateFieldDto, String]),
     __metadata("design:returntype", void 0)
 ], FieldController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], FieldController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], FieldController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_field_dto_1.UpdateFieldDto]),
+    __metadata("design:paramtypes", [String, update_field_dto_1.UpdateFieldDto, String]),
     __metadata("design:returntype", void 0)
 ], FieldController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], FieldController.prototype, "remove", null);
 exports.FieldController = FieldController = __decorate([

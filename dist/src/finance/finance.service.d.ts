@@ -3,7 +3,7 @@ import { CreateFinanceDto } from './dto/create-finance.dto';
 export declare class FinanceService {
     private prisma;
     constructor(prisma: PrismaService);
-    create(createFinanceDto: CreateFinanceDto): Promise<{
+    create(createFinanceDto: CreateFinanceDto, userId: string): Promise<{
         message: string;
         status: number;
         data: {
@@ -20,12 +20,14 @@ export declare class FinanceService {
                 supplier_name: string | null;
                 supplier_contact: string | null;
                 notes: string | null;
+                userId: string | null;
             } | null;
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             notes: string | null;
+            userId: string;
             inventoryId: string | null;
             transactionDate: Date;
             amount: number;
@@ -35,7 +37,7 @@ export declare class FinanceService {
             transactionId: string;
         };
     }>;
-    findAll(): Promise<({
+    findAll(userId: string): Promise<({
         inventory: {
             name: string;
             id: string;
@@ -49,12 +51,14 @@ export declare class FinanceService {
             supplier_name: string | null;
             supplier_contact: string | null;
             notes: string | null;
+            userId: string | null;
         } | null;
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
         notes: string | null;
+        userId: string;
         inventoryId: string | null;
         transactionDate: Date;
         amount: number;
@@ -63,16 +67,17 @@ export declare class FinanceService {
         paymentMethod: import(".prisma/client").$Enums.paymentMethod;
         transactionId: string;
     })[]>;
-    calculateNetBalance(): Promise<{
+    calculateNetBalance(userId: string): Promise<{
         totalIncome: number;
         totalExpense: number;
         netBalance: number;
     }>;
-    findByCategory(category: string): Promise<{
+    findByCategory(category: string, userId: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
         notes: string | null;
+        userId: string;
         inventoryId: string | null;
         transactionDate: Date;
         amount: number;
@@ -81,7 +86,7 @@ export declare class FinanceService {
         paymentMethod: import(".prisma/client").$Enums.paymentMethod;
         transactionId: string;
     }[]>;
-    getDashboardKPIs(from?: string, to?: string): Promise<{
+    getDashboardKPIs(userId: string, from?: string, to?: string): Promise<{
         period: string | {
             from: string;
             to: string;

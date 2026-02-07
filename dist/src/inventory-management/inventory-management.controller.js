@@ -17,22 +17,25 @@ const common_1 = require("@nestjs/common");
 const inventory_management_service_1 = require("./inventory-management.service");
 const create_inventory_management_dto_1 = require("./dto/create-inventory-management.dto");
 const update_inventory_management_dto_1 = require("./dto/update-inventory-management.dto");
+const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
+const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 let InventoryManagementController = class InventoryManagementController {
     inventoryManagementService;
     constructor(inventoryManagementService) {
         this.inventoryManagementService = inventoryManagementService;
     }
-    create(createInventoryManagementDto) {
-        return this.inventoryManagementService.create(createInventoryManagementDto);
+    create(createInventoryManagementDto, userId) {
+        console.log('User from JWT:', userId);
+        return this.inventoryManagementService.create(createInventoryManagementDto, userId);
     }
-    findAll() {
-        return this.inventoryManagementService.findAll();
+    findAll(userId) {
+        return this.inventoryManagementService.findAll(userId);
     }
     findOne(id) {
         return this.inventoryManagementService.findOne(+id);
     }
-    update(id, updateInventoryManagementDto) {
-        return this.inventoryManagementService.update(id, updateInventoryManagementDto);
+    update(id, updateInventoryManagementDto, userId) {
+        return this.inventoryManagementService.update(id, updateInventoryManagementDto, userId);
     }
     remove(id) {
         return this.inventoryManagementService.remove(id);
@@ -41,15 +44,19 @@ let InventoryManagementController = class InventoryManagementController {
 exports.InventoryManagementController = InventoryManagementController;
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_inventory_management_dto_1.CreateInventoryManagementDto]),
+    __metadata("design:paramtypes", [create_inventory_management_dto_1.CreateInventoryManagementDto, String]),
     __metadata("design:returntype", void 0)
 ], InventoryManagementController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], InventoryManagementController.prototype, "findAll", null);
 __decorate([
@@ -61,10 +68,12 @@ __decorate([
 ], InventoryManagementController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)('/update/:id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_inventory_management_dto_1.UpdateInventoryManagementDto]),
+    __metadata("design:paramtypes", [String, update_inventory_management_dto_1.UpdateInventoryManagementDto, String]),
     __metadata("design:returntype", void 0)
 ], InventoryManagementController.prototype, "update", null);
 __decorate([

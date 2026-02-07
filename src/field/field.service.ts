@@ -7,8 +7,13 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class FieldService {
   constructor(private prisma: PrismaService) {}
-  async create(createFieldDto: CreateFieldDto) {
-   const field = await this.prisma.field.create({ data: createFieldDto });
+  async create(createFieldDto: CreateFieldDto, userId: string) {
+   const field = await this.prisma.field.create({
+     data: {
+       ...createFieldDto,
+       userId,
+     },
+   });
    return {
     message: 'Field created successfully',
     data: field,
@@ -16,8 +21,12 @@ export class FieldService {
    };
   }
 
-  async findAll() {
-   const fields =  await this.prisma.field.findMany();
+  async findAll(userId: string) {
+   const fields =  await this.prisma.field.findMany({
+     where: {
+       userId,
+     },
+   });
    return {
     message: 'Fields retrieved successfully',
     data: fields,
@@ -25,13 +34,29 @@ export class FieldService {
    };
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} field`;
+  async findOne(id: string, userId: string) {
+    const field = await this.prisma.field.findUnique({
+      where: {
+        id,
+        userId,
+      },
+    });
+    if (!field) {
+      return {
+        message: 'Field not found',
+        status: 404,
+      };
+    }
+    return {
+      message: 'Field retrieved successfully',
+      data: field,
+      status: 200,
+    };
   }
 
- async  update(id:string, updateFieldDto: UpdateFieldDto) {
+ async  update(id:string, updateFieldDto: UpdateFieldDto, userId: string) {
     const field = await this.prisma.field.update({
-      where: { id },
+      where: { id, userId },
       data: updateFieldDto,
     });
     return {
@@ -41,8 +66,8 @@ export class FieldService {
     };
   }
 
-  async remove(id: string) {
-    const field = await this.prisma.field.delete({ where: { id } });
+  async remove(id: string, userId: string) {
+    const field = await this.prisma.field.delete({ where: { id, userId } });
     if (!field) {
       return {
         message: 'Field not found',

@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export declare class InventoryManagementService {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    create(createInventoryManagementDto: CreateInventoryManagementDto): Promise<{
+    create(createInventoryManagementDto: CreateInventoryManagementDto, userId: string): Promise<{
         message: string;
         data: {
             name: string;
@@ -19,10 +19,11 @@ export declare class InventoryManagementService {
             supplier_name: string | null;
             supplier_contact: string | null;
             notes: string | null;
+            userId: string | null;
         };
         status: number;
     } | undefined>;
-    findAll(): Promise<{
+    findAll(userId: string): Promise<{
         message: string;
         status: number;
         data: ({
@@ -39,6 +40,7 @@ export declare class InventoryManagementService {
                 createdAt: Date;
                 updatedAt: Date;
                 notes: string | null;
+                userId: string | null;
                 inventoryId: string;
                 stockType: import(".prisma/client").$Enums.StockType;
                 transactionQuantity: number;
@@ -59,6 +61,7 @@ export declare class InventoryManagementService {
             supplier_name: string | null;
             supplier_contact: string | null;
             notes: string | null;
+            userId: string | null;
         })[];
         error?: undefined;
     } | {
@@ -68,7 +71,7 @@ export declare class InventoryManagementService {
         data?: undefined;
     }>;
     findOne(id: number): string;
-    update(id: string, updateInventoryManagementDto: UpdateInventoryManagementDto): Promise<{
+    update(id: string, updateInventoryManagementDto: UpdateInventoryManagementDto, userId: string): Promise<{
         message: string;
         status: number;
         data?: undefined;
@@ -87,6 +90,7 @@ export declare class InventoryManagementService {
             supplier_name: string | null;
             supplier_contact: string | null;
             notes: string | null;
+            userId: string | null;
         };
         status: number;
     }>;

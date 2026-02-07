@@ -17,28 +17,53 @@ let FieldService = class FieldService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async create(createFieldDto) {
-        const field = await this.prisma.field.create({ data: createFieldDto });
+    async create(createFieldDto, userId) {
+        const field = await this.prisma.field.create({
+            data: {
+                ...createFieldDto,
+                userId,
+            },
+        });
         return {
             message: 'Field created successfully',
             data: field,
             status: 201,
         };
     }
-    async findAll() {
-        const fields = await this.prisma.field.findMany();
+    async findAll(userId) {
+        const fields = await this.prisma.field.findMany({
+            where: {
+                userId,
+            },
+        });
         return {
             message: 'Fields retrieved successfully',
             data: fields,
             status: 200,
         };
     }
-    findOne(id) {
-        return `This action returns a #${id} field`;
+    async findOne(id, userId) {
+        const field = await this.prisma.field.findUnique({
+            where: {
+                id,
+                userId,
+            },
+        });
+        if (!field) {
+            return {
+                message: 'Field not found',
+                status: 404,
+            };
+        }
+        return {
+            message: 'Field retrieved successfully',
+            data: field,
+            status: 200,
+        };
     }
-    async update(id, updateFieldDto) {
+    async update(id, updateFieldDto, userId) {
         const field = await this.prisma.field.update({
-            where: { id },
+            where: { id, userId },
             data: updateFieldDto,
         });
         return {
@@ -47,8 +72,8 @@ let FieldService = class FieldService {
             status: 200,
         };
     }
-    async remove(id) {
-        const field = await this.prisma.field.delete({ where: { id } });
+    async remove(id, userId) {
+        const field = await this.prisma.field.delete({ where: { id, userId } });
         if (!field) {
             return {
                 message: 'Field not found',

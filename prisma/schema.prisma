@@ -19,6 +19,10 @@ model User {
   createdAt                DateTime  @default(now()) @db.Timestamp(6)
   updatedAt                DateTime  @updatedAt @db.Timestamp(6)
   profile                  Profile?
+  inventories InventoryManagement[]
+  inventoryTransactions InventoryTransaction[]
+  finances Finnace[]
+fields Field[]
 }
 
 model Profile {
@@ -56,6 +60,8 @@ model InventoryManagement {
   finance                   Finnace[]
   category                  InventoryCategory      @relation(fields: [categoryId], references: [id])
   transactions              InventoryTransaction[]
+  userId                  String?
+  user                    User?                  @relation(fields: [userId], references: [id])
 }
 
 model InventoryTransaction {
@@ -70,6 +76,8 @@ model InventoryTransaction {
   purpose             PurposeType
   stock               Int
   inventory           InventoryManagement @relation(fields: [inventoryId], references: [id])
+  userId           String?
+  user           User?               @relation(fields: [userId], references: [id])
 }
 
 model Finnace {
@@ -85,6 +93,9 @@ model Finnace {
   createdAt           DateTime             @default(now()) @db.Timestamp(6)
   updatedAt           DateTime             @updatedAt @db.Timestamp(6)
   inventory           InventoryManagement? @relation(fields: [inventoryId], references: [id])
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  
 }
 
 model ProductFromMarket {
@@ -161,6 +172,8 @@ model Field{
   P Float
   K Float
   pH Float
+  userId String
+  user User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime @updatedAt @db.Timestamp(6)
 }

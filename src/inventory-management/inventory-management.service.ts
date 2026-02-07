@@ -6,9 +6,12 @@ import { PrismaService } from '../prisma/prisma.service';
 export class InventoryManagementService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createInventoryManagementDto: CreateInventoryManagementDto) {
+  async create(createInventoryManagementDto: CreateInventoryManagementDto, userId: string) {
     const inventory = await this.prisma.inventoryManagement.create({
-      data: createInventoryManagementDto,
+      data: {
+        ...createInventoryManagementDto,
+        userId,
+      },
     });
     const stockEntry = await this.prisma.inventoryTransaction.create({
       data: {
@@ -28,9 +31,10 @@ export class InventoryManagementService {
     }
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     try {
       const inventoriesItems = await this.prisma.inventoryManagement.findMany({
+        where: { userId },
         include: {
           category: true,
           transactions: {
@@ -61,9 +65,10 @@ export class InventoryManagementService {
   async update(
     id: string,
     updateInventoryManagementDto: UpdateInventoryManagementDto,
+    userId: string
   ) {
     const item = await this.prisma.inventoryManagement.findUnique({
-      where: { id },
+      where: { id , userId },
     });
     if (!item) {
       return {

@@ -16,60 +16,72 @@ exports.FinanceController = void 0;
 const common_1 = require("@nestjs/common");
 const finance_service_1 = require("./finance.service");
 const create_finance_dto_1 = require("./dto/create-finance.dto");
+const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
+const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 let FinanceController = class FinanceController {
     financeService;
     constructor(financeService) {
         this.financeService = financeService;
     }
-    create(createFinanceDto) {
-        return this.financeService.create(createFinanceDto);
+    create(createFinanceDto, userId) {
+        return this.financeService.create(createFinanceDto, userId);
     }
-    findAll() {
-        return this.financeService.findAll();
+    findAll(userId) {
+        return this.financeService.findAll(userId);
     }
-    calculateNetBalance() {
-        return this.financeService.calculateNetBalance();
+    calculateNetBalance(userId) {
+        return this.financeService.calculateNetBalance(userId);
     }
-    findByCategory(category) {
-        return this.financeService.findByCategory(category);
+    findByCategory(category, userId) {
+        return this.financeService.findByCategory(category, userId);
     }
-    getDashboardKPIs(from, to) {
-        return this.financeService.getDashboardKPIs(from, to);
+    getDashboardKPIs(userId, from, to) {
+        return this.financeService.getDashboardKPIs(userId, from, to);
     }
 };
 exports.FinanceController = FinanceController;
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_finance_dto_1.CreateFinanceDto]),
+    __metadata("design:paramtypes", [create_finance_dto_1.CreateFinanceDto, String]),
     __metadata("design:returntype", void 0)
 ], FinanceController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], FinanceController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('net-balance'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], FinanceController.prototype, "calculateNetBalance", null);
 __decorate([
     (0, common_1.Get)('category/:category'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('category')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], FinanceController.prototype, "findByCategory", null);
 __decorate([
     (0, common_1.Get)('dashboard/kpi'),
-    __param(0, (0, common_1.Query)('from')),
-    __param(1, (0, common_1.Query)('to')),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, current_user_decorator_1.CurrentUser)('userId')),
+    __param(1, (0, common_1.Query)('from')),
+    __param(2, (0, common_1.Query)('to')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], FinanceController.prototype, "getDashboardKPIs", null);
 exports.FinanceController = FinanceController = __decorate([

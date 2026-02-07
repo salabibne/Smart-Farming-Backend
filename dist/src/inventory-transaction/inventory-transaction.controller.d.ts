@@ -3,13 +3,14 @@ import { CreateInventoryTransactionDto } from './dto/create-inventory-transactio
 export declare class InventoryTransactionController {
     private readonly inventoryTransactionService;
     constructor(inventoryTransactionService: InventoryTransactionService);
-    stockIn(createInventoryTransactionDto: CreateInventoryTransactionDto): Promise<{
+    stockIn(createInventoryTransactionDto: CreateInventoryTransactionDto, userId: string): Promise<{
         message: string;
         data: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             notes: string | null;
+            userId: string | null;
             inventoryId: string;
             stockType: import(".prisma/client").$Enums.StockType;
             transactionQuantity: number;
@@ -18,18 +19,15 @@ export declare class InventoryTransactionController {
             stock: number;
         };
         status: number;
-    } | undefined>;
-    stockOut(createInventoryTransactionDto: CreateInventoryTransactionDto): Promise<{
-        message: string;
-        status: number;
-        data?: undefined;
-    } | {
+    }>;
+    stockOut(createInventoryTransactionDto: CreateInventoryTransactionDto, userId: string): Promise<{
         message: string;
         data: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             notes: string | null;
+            userId: string | null;
             inventoryId: string;
             stockType: import(".prisma/client").$Enums.StockType;
             transactionQuantity: number;
@@ -38,8 +36,8 @@ export declare class InventoryTransactionController {
             stock: number;
         };
         status: number;
-    } | undefined>;
-    findAll(): Promise<{
+    }>;
+    findAll(userId: string): Promise<{
         data: ({
             inventory: {
                 name: string;
@@ -54,12 +52,14 @@ export declare class InventoryTransactionController {
                 supplier_name: string | null;
                 supplier_contact: string | null;
                 notes: string | null;
+                userId: string | null;
             };
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             notes: string | null;
+            userId: string | null;
             inventoryId: string;
             stockType: import(".prisma/client").$Enums.StockType;
             transactionQuantity: number;
@@ -70,7 +70,7 @@ export declare class InventoryTransactionController {
         message: string;
         status: number;
     }>;
-    findOne(id: string): Promise<{
+    findOne(id: string, userId: string): Promise<{
         data: ({
             inventory: {
                 name: string;
@@ -85,12 +85,14 @@ export declare class InventoryTransactionController {
                 supplier_name: string | null;
                 supplier_contact: string | null;
                 notes: string | null;
+                userId: string | null;
             };
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             notes: string | null;
+            userId: string | null;
             inventoryId: string;
             stockType: import(".prisma/client").$Enums.StockType;
             transactionQuantity: number;

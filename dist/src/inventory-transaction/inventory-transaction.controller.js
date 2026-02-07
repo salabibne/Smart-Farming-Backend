@@ -16,50 +16,60 @@ exports.InventoryTransactionController = void 0;
 const common_1 = require("@nestjs/common");
 const inventory_transaction_service_1 = require("./inventory-transaction.service");
 const create_inventory_transaction_dto_1 = require("./dto/create-inventory-transaction.dto");
+const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
+const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 let InventoryTransactionController = class InventoryTransactionController {
     inventoryTransactionService;
     constructor(inventoryTransactionService) {
         this.inventoryTransactionService = inventoryTransactionService;
     }
-    stockIn(createInventoryTransactionDto) {
-        return this.inventoryTransactionService.stockIn(createInventoryTransactionDto);
+    stockIn(createInventoryTransactionDto, userId) {
+        return this.inventoryTransactionService.stockIn(createInventoryTransactionDto, userId);
     }
-    stockOut(createInventoryTransactionDto) {
-        return this.inventoryTransactionService.stockOut(createInventoryTransactionDto);
+    stockOut(createInventoryTransactionDto, userId) {
+        return this.inventoryTransactionService.stockOut(createInventoryTransactionDto, userId);
     }
-    findAll() {
-        return this.inventoryTransactionService.findAll();
+    findAll(userId) {
+        return this.inventoryTransactionService.findAll(userId);
     }
-    findOne(id) {
-        return this.inventoryTransactionService.findOne(id);
+    findOne(id, userId) {
+        return this.inventoryTransactionService.findOne(id, userId);
     }
 };
 exports.InventoryTransactionController = InventoryTransactionController;
 __decorate([
     (0, common_1.Post)('stock-in'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_inventory_transaction_dto_1.CreateInventoryTransactionDto]),
+    __metadata("design:paramtypes", [create_inventory_transaction_dto_1.CreateInventoryTransactionDto, String]),
     __metadata("design:returntype", void 0)
 ], InventoryTransactionController.prototype, "stockIn", null);
 __decorate([
     (0, common_1.Post)('stock-out'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_inventory_transaction_dto_1.CreateInventoryTransactionDto]),
+    __metadata("design:paramtypes", [create_inventory_transaction_dto_1.CreateInventoryTransactionDto, String]),
     __metadata("design:returntype", void 0)
 ], InventoryTransactionController.prototype, "stockOut", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], InventoryTransactionController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], InventoryTransactionController.prototype, "findOne", null);
 exports.InventoryTransactionController = InventoryTransactionController = __decorate([

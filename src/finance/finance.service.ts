@@ -13,7 +13,7 @@ export class FinanceService {
    * 1. Record a Transaction (Create)
    * Creates a new financial transaction record.
    */
-  async create(createFinanceDto: CreateFinanceDto) {
+  async create(createFinanceDto: CreateFinanceDto, userId: string) {
     const { inventoryId, amount, ...rest } = createFinanceDto;
 
     // 1. Logic to handle optional Inventory ID
@@ -28,6 +28,8 @@ export class FinanceService {
           amount: Number(amount),
           // Link the inventory only if we have a valid ID
           inventoryId: linkedInventoryId,
+          userId,
+
           // Use provided date or default to now
         },
 
@@ -55,8 +57,9 @@ export class FinanceService {
    * 2. View All Transactions (Read)
    * Retrieves all finance transactions.
    */
-  async findAll() {
+  async findAll(userId: string) {
     return this.prisma.finnace.findMany({
+      where: { userId },
       orderBy: {
         transactionDate: 'desc', // Show newest transactions first
       },
@@ -70,18 +73,18 @@ export class FinanceService {
    * 3. Calculate Total Balance (Reporting)
    * Calculates the net financial position (Total Income - Total Expense).
    */
-  async calculateNetBalance() {
+  async calculateNetBalance(userId: string) {
     // Aggregate income amounts
     const incomeResult = await this.prisma.finnace.aggregate({
       _sum: { amount: true },
-      where: { transactionType: TransactionType.INCOME },
+      where: { transactionType: TransactionType.INCOME, userId },
     });
     const totalIncome = incomeResult._sum.amount || 0;
 
     // Aggregate expense amounts
     const expenseResult = await this.prisma.finnace.aggregate({
       _sum: { amount: true },
-      where: { transactionType: TransactionType.EXPENSE },
+      where: { transactionType: TransactionType.EXPENSE, userId },
     });
     const totalExpense = expenseResult._sum.amount || 0;
 
@@ -98,19 +101,19 @@ export class FinanceService {
    * 4. Filter by Type/Category (Reporting)
    * Retrieves all transactions for a specific category.
    */
-  async findByCategory(category: string) {
+  async findByCategory(category: string, userId: string) {
     console.log('Catch');
     return this.prisma.finnace.findMany({
       where: {
         transactionCategory: category as any, // Cast to any for dynamic enum usage
+        userId,
       },
       orderBy: {
         transactionDate: 'desc',
       },
     });
   }
-
-  async getDashboardKPIs(from?: string, to?: string) {
+  async getDashboardKPIs(userId: string, from?: string, to?: string) {
     // Build date filter only if dates are provided
     const dateFilter =
       from && to
@@ -122,52 +125,48 @@ export class FinanceService {
           }
         : {};
 
-    // 1. Total Income
+    // 1️⃣ Total Income (only for this user)
     const incomeResult = await this.prisma.finnace.aggregate({
       _sum: { amount: true },
       where: {
         transactionType: 'INCOME',
+        userId, // 🔐 user isolation
         ...dateFilter,
       },
     });
 
-    // 2. Total Expense
+    // 2️⃣ Total Expense
     const expenseResult = await this.prisma.finnace.aggregate({
       _sum: { amount: true },
       where: {
         transactionType: 'EXPENSE',
+        userId, // 🔐 user isolation
         ...dateFilter,
       },
     });
 
     const totalIncome = incomeResult._sum.amount || 0;
     const totalExpense = expenseResult._sum.amount || 0;
-
-    // 3. Net Profit
     const netProfit = totalIncome - totalExpense;
 
-    // 4. Number of Transactions
+    // 3️⃣ Number of Transactions
     const totalTransactions = await this.prisma.finnace.count({
       where: {
+        userId,
         ...dateFilter,
       },
     });
 
-    // 5. Highest Expense Category
+    // 4️⃣ Highest Expense Category
     const highestExpenseCategory = await this.prisma.finnace.groupBy({
       by: ['transactionCategory'],
       where: {
         transactionType: 'EXPENSE',
+        userId,
         ...dateFilter,
       },
-      _sum: {
-        amount: true,
-      },
-      orderBy: {
-        _sum: {
-          amount: 'desc',
-        },
-      },
+      _sum: { amount: true },
+      orderBy: { _sum: { amount: 'desc' } },
       take: 1,
     });
 

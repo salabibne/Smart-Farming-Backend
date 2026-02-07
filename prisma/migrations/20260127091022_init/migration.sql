@@ -75,6 +75,7 @@ CREATE TABLE "InventoryManagement" (
     "categoryId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL,
+    "userId" TEXT,
 
     CONSTRAINT "InventoryManagement_pkey" PRIMARY KEY ("id")
 );
@@ -91,6 +92,7 @@ CREATE TABLE "InventoryTransaction" (
     "updatedAt" TIMESTAMP(6) NOT NULL,
     "purpose" "PurposeType" NOT NULL,
     "stock" INTEGER NOT NULL,
+    "userId" TEXT,
 
     CONSTRAINT "InventoryTransaction_pkey" PRIMARY KEY ("id")
 );
@@ -108,6 +110,7 @@ CREATE TABLE "Finnace" (
     "transactionDate" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "Finnace_pkey" PRIMARY KEY ("id")
 );
@@ -189,6 +192,24 @@ CREATE TABLE "fertilizer_split_ratio" (
     CONSTRAINT "fertilizer_split_ratio_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Field" (
+    "id" TEXT NOT NULL,
+    "name" VARCHAR NOT NULL,
+    "location" VARCHAR NOT NULL,
+    "size_Square_Meter" DOUBLE PRECISION NOT NULL,
+    "imageURL" TEXT NOT NULL,
+    "N" DOUBLE PRECISION NOT NULL,
+    "P" DOUBLE PRECISION NOT NULL,
+    "K" DOUBLE PRECISION NOT NULL,
+    "pH" DOUBLE PRECISION NOT NULL,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(6) NOT NULL,
+
+    CONSTRAINT "Field_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -205,10 +226,19 @@ ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "InventoryManagement" ADD CONSTRAINT "InventoryManagement_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "InventoryCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "InventoryManagement" ADD CONSTRAINT "InventoryManagement_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "InventoryTransaction" ADD CONSTRAINT "InventoryTransaction_inventoryId_fkey" FOREIGN KEY ("inventoryId") REFERENCES "InventoryManagement"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "InventoryTransaction" ADD CONSTRAINT "InventoryTransaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Finnace" ADD CONSTRAINT "Finnace_inventoryId_fkey" FOREIGN KEY ("inventoryId") REFERENCES "InventoryManagement"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Finnace" ADD CONSTRAINT "Finnace_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "fertilizer_application_schedule" ADD CONSTRAINT "fertilizer_application_schedule_fertilizer_plan_id_fkey" FOREIGN KEY ("fertilizer_plan_id") REFERENCES "fertilizer_planning"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -222,3 +252,5 @@ ALTER TABLE "fertilizer_requirements" ADD CONSTRAINT "fertilizer_requirements_fe
 -- AddForeignKey
 ALTER TABLE "fertilizer_split_ratio" ADD CONSTRAINT "fertilizer_split_ratio_schedule_id_fkey" FOREIGN KEY ("schedule_id") REFERENCES "fertilizer_application_schedule"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+-- AddForeignKey
+ALTER TABLE "Field" ADD CONSTRAINT "Field_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -18,7 +18,7 @@ let FinanceService = class FinanceService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async create(createFinanceDto) {
+    async create(createFinanceDto, userId) {
         const { inventoryId, amount, ...rest } = createFinanceDto;
         const linkedInventoryId = inventoryId && inventoryId.trim() !== '' ? inventoryId : null;
         try {
@@ -27,6 +27,7 @@ let FinanceService = class FinanceService {
                     ...rest,
                     amount: Number(amount),
                     inventoryId: linkedInventoryId,
+                    userId,
                 },
                 include: {
                     inventory: true,
@@ -45,8 +46,9 @@ let FinanceService = class FinanceService {
             throw error;
         }
     }
-    async findAll() {
+    async findAll(userId) {
         return this.prisma.finnace.findMany({
+            where: { userId },
             orderBy: {
                 transactionDate: 'desc',
             },
@@ -55,15 +57,15 @@ let FinanceService = class FinanceService {
             },
         });
     }
-    async calculateNetBalance() {
+    async calculateNetBalance(userId) {
         const incomeResult = await this.prisma.finnace.aggregate({
             _sum: { amount: true },
-            where: { transactionType: client_1.TransactionType.INCOME },
+            where: { transactionType: client_1.TransactionType.INCOME, userId },
         });
         const totalIncome = incomeResult._sum.amount || 0;
         const expenseResult = await this.prisma.finnace.aggregate({
             _sum: { amount: true },
-            where: { transactionType: client_1.TransactionType.EXPENSE },
+            where: { transactionType: client_1.TransactionType.EXPENSE, userId },
         });
         const totalExpense = expenseResult._sum.amount || 0;
         const netBalance = totalIncome - totalExpense;
@@ -73,18 +75,19 @@ let FinanceService = class FinanceService {
             netBalance,
         };
     }
-    async findByCategory(category) {
+    async findByCategory(category, userId) {
         console.log('Catch');
         return this.prisma.finnace.findMany({
             where: {
                 transactionCategory: category,
+                userId,
             },
             orderBy: {
                 transactionDate: 'desc',
             },
         });
     }
-    async getDashboardKPIs(from, to) {
+    async getDashboardKPIs(userId, from, to) {
         const dateFilter = from && to
             ? {
                 transactionDate: {
@@ -97,6 +100,7 @@ let FinanceService = class FinanceService {
             _sum: { amount: true },
             where: {
                 transactionType: 'INCOME',
+                userId,
                 ...dateFilter,
             },
         });
@@ -104,6 +108,7 @@ let FinanceService = class FinanceService {
             _sum: { amount: true },
             where: {
                 transactionType: 'EXPENSE',
+                userId,
                 ...dateFilter,
             },
         });
@@ -112,6 +117,7 @@ let FinanceService = class FinanceService {
         const netProfit = totalIncome - totalExpense;
         const totalTransactions = await this.prisma.finnace.count({
             where: {
+                userId,
                 ...dateFilter,
             },
         });
@@ -119,16 +125,11 @@ let FinanceService = class FinanceService {
             by: ['transactionCategory'],
             where: {
                 transactionType: 'EXPENSE',
+                userId,
                 ...dateFilter,
             },
-            _sum: {
-                amount: true,
-            },
-            orderBy: {
-                _sum: {
-                    amount: 'desc',
-                },
-            },
+            _sum: { amount: true },
+            orderBy: { _sum: { amount: 'desc' } },
             take: 1,
         });
         return {
